@@ -17,7 +17,7 @@ def main():
 
   # команды
   dp.add_handler(CommandHandler("create_marathon", create_marathon_command))
-  dp.add_handler(CommandHandler("add_maraphon_members", add_members_command))
+  dp.add_handler(CommandHandler("add_marathon_members", add_members_command))
   dp.add_handler(CommandHandler("add_ill", add_ill_command))
   dp.add_handler(CommandHandler("day_stat", day_stat_command))
 

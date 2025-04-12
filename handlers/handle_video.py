@@ -12,7 +12,7 @@ from db.queries import (
 
 def handle_video(update: Update, context: CallbackContext):
   user = update.effective_user
-  video = update.message.video
+  video = update.effective_message.video
 
   if not video:
     return

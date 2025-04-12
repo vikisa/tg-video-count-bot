@@ -4,11 +4,11 @@ from db.queries import get_or_create_member, get_marathon_id_and_start, add_memb
 
 def add_members_command(update: Update, context: CallbackContext):
   if len(context.args) < 2:
-    update.effective_message.reply_text('Формат: /add_maraphon_members <марафон> @user1 @user2 ...')
+    update.effective_message.reply_text('Формат: /add_marathon_members <марафон> @user1 @user2 ...')
     return
 
   marathon_name = context.args[0]
-  mentions = context.message.entities[1:]  # пропускаем /command
+  mentions = update.effective_message.entities[1:]  # пропускаем /command
 
   marathon = get_marathon_id_and_start(marathon_name)
   if not marathon:
@@ -22,8 +22,8 @@ def add_members_command(update: Update, context: CallbackContext):
     if entity.type != "mention":
       continue
 
-    username = update.message.text[entity.offset : entity.offset + entity.length]
-    user = update.message.parse_entities().get(entity)
+    username = update.effective_message.text[entity.offset : entity.offset + entity.length]
+    user = update.effective_message.parse_entities().get(entity)
 
     if not user:
       continue  # возможно, не удалось извлечь info

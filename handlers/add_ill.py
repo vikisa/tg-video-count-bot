@@ -13,7 +13,7 @@ def add_ill_command(update: Update, context: CallbackContext):
   username = raw_username.lstrip('@')
 
   try:
-    start_date = datetime.strptime(raw_date, "%Y-%m-%d").date()
+    start_date = datetime.strptime(raw_date, "%d-%m-%Y").date()
     day_count = int(raw_count)
 
     sender_id = update.effective_user.id

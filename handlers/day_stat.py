@@ -15,7 +15,7 @@ def day_stat_command(update: Update, context: CallbackContext):
 
   name = context.args[0]
   try:
-    target_date = datetime.strptime(context.args[1], "%Y-%m-%d").date()
+    target_date = datetime.strptime(context.args[1], "%d-%m-%Y").date()
   except:
     update.effective_message.reply_text("Неверный формат даты")
     return

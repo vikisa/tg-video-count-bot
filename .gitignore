@@ -1,0 +1,15 @@
+# виртуальное окружение
+venv/
+./venv/
+
+# кеш Python
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+
+# зависимости
+*.egg-info/
+*.logS

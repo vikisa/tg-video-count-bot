@@ -56,7 +56,7 @@ def add_member_to_marathon(member_id, marathon_id, joined_date):
 def get_member_id_by_username(username: str):
   conn = get_conn()
   cursor = conn.cursor()
-  cursor.execute("SELECT id FROM members WHERE name = %s", (username,))
+  cursor.execute("SELECT id FROM members WHERE username = %s", (username,))
   result = cursor.fetchone()
   conn.close()
   return result[0] if result else None
@@ -175,7 +175,7 @@ def get_marathon_participants(marathon_id):
   conn = get_conn()
   cursor = conn.cursor()
   cursor.execute("""
-        SELECT m.id, m.name
+        SELECT m.id, m.username
         FROM members m
         JOIN marathon_members mm ON mm.user_id = m.id
         WHERE mm.marathon_id = %s

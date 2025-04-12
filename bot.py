@@ -16,10 +16,10 @@ def main():
   dp = updater.dispatcher
 
   # команды
-  dp.add_handler(CommandHandler("create-marathon", create_marathon_command))
-  dp.add_handler(CommandHandler("add-maraphon-members", add_members_command))
-  dp.add_handler(CommandHandler("add-ill", add_ill_command))
-  dp.add_handler(CommandHandler("day-stat", day_stat_command))
+  dp.add_handler(CommandHandler("create_marathon", create_marathon_command))
+  dp.add_handler(CommandHandler("add_maraphon_members", add_members_command))
+  dp.add_handler(CommandHandler("add_ill", add_ill_command))
+  dp.add_handler(CommandHandler("day_stat", day_stat_command))
 
   # приём видео
   dp.add_handler(MessageHandler(Filters.video, handle_video))

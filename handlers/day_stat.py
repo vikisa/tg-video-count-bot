@@ -10,19 +10,19 @@ from db.queries import (
 
 def day_stat_command(update: Update, context: CallbackContext):
   if len(context.args) < 2:
-    update.message.reply_text("Формат: /day-stat <марафон> <дата>")
+    update.effective_message.reply_text("Формат: /day_stat <марафон> <дата>")
     return
 
   name = context.args[0]
   try:
     target_date = datetime.strptime(context.args[1], "%Y-%m-%d").date()
   except:
-    update.message.reply_text("Неверный формат даты")
+    update.effective_message.reply_text("Неверный формат даты")
     return
 
   marathon_id = get_marathon_id_by_name(name)
   if not marathon_id:
-    update.message.reply_text("Марафон не найден")
+    update.effective_message.reply_text("Марафон не найден")
     return
 
   participants = get_marathon_participants(marathon_id)
@@ -43,4 +43,4 @@ def day_stat_command(update: Update, context: CallbackContext):
   text = f"""📅 Статистика за {target_date}:
 ✅ Сдали: {', '.join(present) or 'никто'}
 ❌ Не сдали: {', '.join(missing) or 'никого'}"""
-  update.message.reply_text(text)
+  update.effective_message.reply_text(text)

@@ -4,7 +4,7 @@ from db.queries import get_or_create_member, get_marathon_id_and_start, add_memb
 
 def add_members_command(update: Update, context: CallbackContext):
   if len(context.args) < 2:
-    update.message.reply_text('Формат: /add-maraphon-members <марафон> @user1 @user2 ...')
+    update.effective_message.reply_text('Формат: /add_maraphon_members <марафон> @user1 @user2 ...')
     return
 
   marathon_name = context.args[0]
@@ -12,7 +12,7 @@ def add_members_command(update: Update, context: CallbackContext):
 
   marathon = get_marathon_id_and_start(marathon_name)
   if not marathon:
-    update.message.reply_text('Марафон не найден')
+    update.effective_message.reply_text('Марафон не найден')
     return
 
   marathon_id, start_date = marathon
@@ -33,4 +33,4 @@ def add_members_command(update: Update, context: CallbackContext):
     add_member_to_marathon(member_id, marathon_id, start_date)
     added.append(username)
 
-  update.message.reply_text(f"Добавлены в марафон {marathon_name}: {', '.join(added)}")
+  update.effective_message.reply_text(f"Добавлены в марафон {marathon_name}: {', '.join(added)}")

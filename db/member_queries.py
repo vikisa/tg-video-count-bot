@@ -23,6 +23,15 @@ def create_member(tg_id, username, is_admin=False):
                   """, (tg_id, username, is_admin))
     conn.commit()
 
+def remove_member(tg_id):
+  with get_conn() as conn:
+    with conn.cursor() as cur:
+      cur.execute("""
+                  DELETE FROM members
+                  WHERE tg_id = %s
+                  """, (tg_id))
+    conn.commit()
+
 def get_member_id_by_username(username: str):
   conn = get_conn()
   cursor = conn.cursor()

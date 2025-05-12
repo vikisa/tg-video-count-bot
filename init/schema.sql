@@ -1,23 +1,26 @@
-CREATE TABLE marathons (
-    id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    price INTEGER NOT NULL
-);
-
 CREATE TABLE members (
     id SERIAL PRIMARY KEY,
-    tg_id INTEGER NOT NULL,
-    username TEXT NOT NULL,
+    tg_id INTEGER NOT NULL UNIQUE,
+    username TEXT DEFAULT '',
     is_admin BOOLEAN DEFAULT false
+);
+
+CREATE TABLE marathons (
+   id SERIAL PRIMARY KEY,
+   chat_id BIGINT NOT NULL,
+   name TEXT UNIQUE NOT NULL,
+   start_date DATE NOT NULL,
+   end_date DATE NOT NULL,
+   price INTEGER NOT NULL,
+   created_by INTEGER REFERENCES members(id) NOT NULL
 );
 
 CREATE TABLE marathon_members (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
-    marathon_id INTEGER REFERENCES marathons(id) ON DELETE CASCADE,
-    joined_date DATE
+    marathon_id INTEGER NOT NULL REFERENCES marathons(id) ON DELETE CASCADE,
+    member_id INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    joined_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (marathon_id, member_id)
 );
 
 CREATE TABLE ills (

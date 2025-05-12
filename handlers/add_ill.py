@@ -1,7 +1,8 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 from datetime import datetime, date
-from db.queries import get_member_id_by_username, add_illness, is_admin
+from db.member_queries import get_member_id_by_username
+from db.queries import add_illness, is_admin
 from utils.errors import reply_error
 
 def add_ill_command(update: Update, context: CallbackContext):

@@ -1,0 +1,2 @@
+DATE_FORMAT = '%d.%m.%Y'
+ADMIN_TG_ID = 248146008

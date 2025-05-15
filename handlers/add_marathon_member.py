@@ -6,7 +6,7 @@ from db.member_queries import create_member, get_member_by_tg_id
 from db.marathon_members import add_participant
 from utils.consts import ADMIN_TG_ID
 
-def add_to_marathon_command(update: Update, context: CallbackContext):
+def add_marathon_member_command(update: Update, context: CallbackContext):
   user = update.effective_user
   chat = update.effective_chat
   reply = update.message.reply_to_message

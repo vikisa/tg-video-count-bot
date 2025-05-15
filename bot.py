@@ -19,6 +19,7 @@ from handlers.remove_buttons import remove_buttons_command
 from handlers.handle_video import handle_video
 from handlers.day_stat import day_stat_command
 from handlers.remove_member import remove_member_command
+from handlers.add_marathon_member import add_marathon_member_command
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -47,6 +48,7 @@ def main():
   dp.add_handler(conv_handler)
   dp.add_handler(CommandHandler('set_admin', set_admin_command))
   dp.add_handler(CommandHandler('remove_member', remove_member_command))
+  dp.add_handler(CommandHandler('add_marathon_member', add_marathon_member_command))
 
   # команды в группе
   dp.add_handler(CommandHandler('get_chat_id', get_chat_id_command))
@@ -54,7 +56,7 @@ def main():
   dp.add_handler(CommandHandler('remove_buttons', remove_buttons_command))
   dp.add_handler(CommandHandler('show_participants', show_participants_command))
   dp.add_handler(CallbackQueryHandler(handle_participation_callback, pattern=r"^(join|pass):\d+$"))
-  dp.add_handler(CommandHandler("day_stat", day_stat_command))
+  dp.add_handler(CommandHandler('day_stat', day_stat_command))
 
   # приём видео
   dp.add_handler(MessageHandler(Filters.video & Filters.chat_type.groups, handle_video))

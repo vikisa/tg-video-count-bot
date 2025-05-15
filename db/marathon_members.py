@@ -1,13 +1,20 @@
 from db.connect import get_conn
 
-def add_participant(marathon_id, member_id):
+def add_participant(marathon_id, member_id, joined_time=None):
   with get_conn() as conn:
     with conn.cursor() as cur:
-      cur.execute("""
-                  INSERT INTO marathon_members (marathon_id, member_id)
-                  VALUES (%s, %s)
-                      ON CONFLICT DO NOTHING
-                  """, (marathon_id, member_id))
+      if joined_time:
+        cur.execute("""
+                    INSERT INTO marathon_members (marathon_id, member_id, joined_at)
+                    VALUES (%s, %s, %s)
+                        ON CONFLICT DO NOTHING
+                    """, (marathon_id, member_id, joined_time))
+      else:
+        cur.execute("""
+                    INSERT INTO marathon_members (marathon_id, member_id)
+                    VALUES (%s, %s)
+                        ON CONFLICT DO NOTHING
+                    """, (marathon_id, member_id))
     conn.commit()
 
 def remove_participant(marathon_id, member_id):

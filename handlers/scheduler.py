@@ -1,12 +1,12 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from zoneinfo import ZoneInfo
 from telegram import Bot
 import os
 from dotenv import load_dotenv
 from db.marathon_members import get_all_members_of_marathon
 from db.day_results import get_members_who_sent_video
 from utils.get_yesterday_day import get_yesterday_date
+import pytz
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -46,7 +46,8 @@ def send_midnight_stat():
   )
 
 def start_scheduler():
+  moscow_tz = pytz.timezone("Europe/Moscow")
   scheduler = BackgroundScheduler()
-  trigger = CronTrigger(hour=0, minute=0, timezone=ZoneInfo("Europe/Moscow"))
+  trigger = CronTrigger(hour=0, minute=0, timezone=moscow_tz)
   scheduler.add_job(send_midnight_stat, trigger)
   scheduler.start()

@@ -11,3 +11,4 @@ typing_extensions==4.13.2
 psycopg2-binary
 python-dotenv
 apscheduler
+pytz

@@ -20,6 +20,7 @@ from handlers.handle_video import handle_video
 from handlers.day_stat import day_stat_command
 from handlers.remove_member import remove_member_command
 from handlers.add_marathon_member import add_marathon_member_command
+from scheduler import start_scheduler
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -60,6 +61,8 @@ def main():
 
   # приём видео
   dp.add_handler(MessageHandler(Filters.video & Filters.chat_type.groups, handle_video))
+
+  start_scheduler()
 
   updater.start_polling()
   updater.idle()

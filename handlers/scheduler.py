@@ -10,15 +10,15 @@ from utils.get_yesterday_day import get_yesterday_date
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
+CHAT_ID = int(-1002579802998)
 
 bot = Bot(token=BOT_TOKEN)
 
 def send_midnight_stat():
   selected_date = get_yesterday_date()
 
-  all_members = get_all_members_of_marathon(-1002579802998)
-  sent_ids = get_members_who_sent_video(-1002579802998, selected_date)
+  all_members = get_all_members_of_marathon(CHAT_ID)
+  sent_ids = get_members_who_sent_video(CHAT_ID, selected_date)
   all_ids = {m["id"] for m in all_members}
   missed_ids = all_ids - sent_ids
 

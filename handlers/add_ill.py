@@ -4,6 +4,7 @@ from datetime import datetime, date
 from db.member_queries import get_member_id_by_username
 from db.queries import add_illness, is_admin
 from utils.errors import reply_error
+from utils.get_moscow_today import get_moscow_today_date
 
 def add_ill_command(update: Update, context: CallbackContext):
   if len(context.args) != 3:
@@ -20,7 +21,7 @@ def add_ill_command(update: Update, context: CallbackContext):
     sender_id = update.effective_user.id
     admin = is_admin(sender_id)
 
-    if start_date < date.today() and not admin:
+    if start_date < get_moscow_today_date() and not admin:
       update.effective_message.reply_text("Нельзя добавлять болезнь задним числом")
       return
   except Exception as e:

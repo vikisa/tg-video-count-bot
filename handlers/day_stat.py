@@ -5,15 +5,15 @@ from db.marathon_queries import get_active_marathon_by_chat
 from db.marathon_members import get_all_members_of_marathon
 from db.day_results import get_members_who_sent_video
 from db.member_queries import get_member_by_tg_id
-
-YOUR_TG_ID = 248146008
+from utils.get_moscow_today import get_moscow_today_date
+from utils.consts import ADMIN_TG_ID
 
 def day_stat_command(update: Update, context: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
 
     member = get_member_by_tg_id(user.id)
-    if not (member and member["is_admin"]) and user.id != YOUR_TG_ID:
+    if not (member and member["is_admin"]) and user.id != ADMIN_TG_ID:
         update.message.reply_text("⛔ Только админ может запрашивать статистику.")
         return
 
@@ -25,7 +25,7 @@ def day_stat_command(update: Update, context: CallbackContext):
             update.message.reply_text("❌ Неверный формат даты. Используй: /day_stat дд.мм.гггг")
             return
     else:
-        selected_date = date.today()
+        selected_date = get_moscow_today_date()
 
     marathon = get_active_marathon_by_chat(chat.id)
     if not marathon:
@@ -45,7 +45,6 @@ def day_stat_command(update: Update, context: CallbackContext):
         all_ids = {m["id"] for m in all_members}
         missed_ids = all_ids - sent_ids
 
-        # 🎉 если все сдали
         if not missed_ids and sent_ids:
             update.message.reply_text(
                 f"🏆 {selected_date.strftime('%d.%m.%Y')} — все умнички!",
@@ -53,8 +52,6 @@ def day_stat_command(update: Update, context: CallbackContext):
             )
             return
 
-        sent = [f"• @{m['username']}" if m['username'] else f"• ID {m['tg_id']}"
-                for m in all_members if m["id"] in sent_ids]
         missed = [f"• @{m['username']}" if m['username'] else f"• ID {m['tg_id']}"
                   for m in all_members if m["id"] in missed_ids]
 
@@ -67,4 +64,4 @@ def day_stat_command(update: Update, context: CallbackContext):
         update.message.reply_text(text, parse_mode="HTML")
 
     except Exception as e:
-        context.bot.send_message(YOUR_TG_ID, f"⚠️ Ошибка в /day_stat: {e}")
+        context.bot.send_message(ADMIN_TG_ID, f"⚠️ Ошибка в /day_stat: {e}")

@@ -4,8 +4,7 @@ from db.marathon_queries import get_active_marathon_by_chat
 from db.member_queries import get_member_by_tg_id
 from db.marathon_members import is_member_of_marathon
 from db.day_results import save_day_result
-
-from datetime import date
+from utils.get_moscow_today import get_moscow_today_date
 
 def handle_video(update: Update, context: CallbackContext):
   chat = update.effective_chat
@@ -31,6 +30,6 @@ def handle_video(update: Update, context: CallbackContext):
   save_day_result(
     member_id=member["id"],
     marathon_id=marathon["id"],
-    current_date=date.today(),
+    current_date=get_moscow_today_date(),
     video_unique_id=video.file_unique_id
   )

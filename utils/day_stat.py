@@ -78,10 +78,7 @@ def get_day_stat(date, reply: Union[ReplyDict, nullcontext], is_bot: bool):
       )
 
   except Exception as e:
-    if not is_bot:
-      context.bot.send_message(ADMIN_TG_ID, f"⚠️ Ошибка в /day_stat: {e}")
-    else:
-      bot.send_message(
-        chat_id=ADMIN_TG_ID,
-        text=f"⚠️ Ошибка в /day_stat: {e}",
-      )
+    bot.send_message(
+      chat_id=ADMIN_TG_ID,
+      text=f"⚠️ Ошибка в /day_stat: {e}",
+    )

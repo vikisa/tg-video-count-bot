@@ -9,6 +9,11 @@ from utils.get_moscow_today import get_moscow_today_date
 def handle_video(update: Update, context: CallbackContext):
   chat = update.effective_chat
   user = update.effective_user
+
+  if not (update.message or update.message.video):
+    print("Сообщение без видео")
+    return
+
   video = update.message.video
 
   # проверяем, что это группа

@@ -17,7 +17,6 @@ bot = Bot(token=BOT_TOKEN)
 
 def get_day_stat(date, reply: Union[ReplyDict, nullcontext], is_bot: bool):
   update: Update = reply['update']
-  context: CallbackContext = reply['context']
 
   marathon = get_active_marathon_by_chat(CHAT_ID)
 

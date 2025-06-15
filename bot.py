@@ -21,6 +21,7 @@ from handlers.day_stat import day_stat_command
 from handlers.remove_member import remove_member_command
 from handlers.add_marathon_member import add_marathon_member_command
 from handlers.scheduler import start_scheduler
+from handlers.stat_all_marathon import stat_all_marathon_command
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -58,6 +59,7 @@ def main():
   dp.add_handler(CommandHandler('show_participants', show_participants_command))
   dp.add_handler(CallbackQueryHandler(handle_participation_callback, pattern=r"^(join|pass):\d+$"))
   dp.add_handler(CommandHandler('day_stat', day_stat_command))
+  dp.add_handler(CommandHandler('stat_all', stat_all_marathon_command))
 
   # приём видео
   dp.add_handler(MessageHandler(Filters.video & Filters.chat_type.groups, handle_video))

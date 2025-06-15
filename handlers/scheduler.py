@@ -4,8 +4,6 @@ from telegram import Bot
 from contextlib import nullcontext
 import os
 from dotenv import load_dotenv
-from db.marathon_members import get_all_members_of_marathon
-from db.day_results import get_members_who_sent_video
 from utils.get_yesterday_day import get_yesterday_date
 import pytz
 from utils.day_stat import get_day_stat

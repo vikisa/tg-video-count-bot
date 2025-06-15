@@ -19,7 +19,7 @@ def get_marathon_summary_stat(marathon_id: int) -> str:
 
   total_days = (end_date - start_date).days + 1
   members = get_all_members_of_marathon(marathon_id)
-
+  print("Участники марафона:", members)
   lines = []
 
   lines.append(f"Всего дней: {total_days}")

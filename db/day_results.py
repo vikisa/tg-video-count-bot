@@ -33,7 +33,7 @@ def get_members_who_sent_video(marathon_id, selected_date):
             """, (marathon_id, selected_date))
             return {row[0] for row in cur.fetchall()}
 
-def count_missed_days_for_member(member_id: int, marathon_id: int, total_days: int) -> int:
+def count_missed_days_for_member(marathon_id: int, member_id: int, total_days: int) -> int:
   with get_conn() as conn:
     with conn.cursor() as cur:
       cur.execute("""

@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from telegram.ext import (
   Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
 )
+
+from handlers.add_payment import add_payment_command
 from handlers.start import start_command
 from handlers.get_chat_id import get_chat_id_command
 from handlers.create_marathon import (
@@ -50,6 +52,7 @@ def main():
   dp.add_handler(CommandHandler('set_admin', set_admin_command))
   dp.add_handler(CommandHandler('remove_member', remove_member_command))
   dp.add_handler(CommandHandler('add_marathon_member', add_marathon_member_command))
+  dp.add_handler(CommandHandler('add_payment', add_payment_command))
 
   # команды в группе
   dp.add_handler(CommandHandler('get_chat_id', get_chat_id_command))

@@ -18,6 +18,7 @@ def get_marathon_summary_stat(marathon_id: int) -> str:
   price = marathon["price"]
 
   total_days = (end_date - start_date).days + 1
+  print('total days', total_days)
   members = get_all_members_of_marathon(marathon_id)
 
   lines = []

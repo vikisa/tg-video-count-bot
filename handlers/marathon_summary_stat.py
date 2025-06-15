@@ -28,7 +28,7 @@ def get_marathon_summary_stat(marathon_id: int) -> str:
     member_id = member["id"]
     username = f"@{member['username']}" if member["username"] else f"ID {member['tg_id']}"
 
-    missed_days = count_missed_days_for_member(marathon_id, member_id, total_days)
+    missed_days = count_missed_days_for_member(marathon_id, member_id, total_days, start_date, end_date)
     due = missed_days * price
 
     paid = get_total_payments_by_member(marathon_id, member_id)

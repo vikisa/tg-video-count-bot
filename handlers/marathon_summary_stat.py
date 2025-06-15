@@ -33,7 +33,7 @@ def get_marathon_summary_stat(marathon_id: int) -> str:
 
     paid = get_total_payments_by_member(marathon_id, member_id)
 
-    lines.append(f"{username} {due}₽ / {paid}₽")
+    lines.append(f"{username}\nПропущено дней: {missed_days}\nОбщая сумма: {due}₽\nЗаплатила: {paid}₽\n")
 
   if not lines:
     return "❌ Нет участников в марафоне."

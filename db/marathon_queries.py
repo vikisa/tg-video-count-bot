@@ -21,7 +21,7 @@ def get_active_marathon_by_chat(chat_id):
   with get_conn() as conn:
     with conn.cursor() as cur:
       cur.execute("""
-                  SELECT id, name, start_date, end_date
+                  SELECT id, name, start_date, end_date, price
                   FROM marathons
                   WHERE chat_id = %s
                   ORDER BY id DESC
@@ -33,7 +33,8 @@ def get_active_marathon_by_chat(chat_id):
           "id": row[0],
           "name": row[1],
           "start_date": row[2],
-          "end_date": row[3]
+          "end_date": row[3],
+          "price": row[4]
         }
       return None
 

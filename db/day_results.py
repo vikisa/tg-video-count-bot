@@ -32,3 +32,15 @@ def get_members_who_sent_video(marathon_id, selected_date):
                 WHERE marathon_id = %s AND date = %s AND complete = TRUE
             """, (marathon_id, selected_date))
             return {row[0] for row in cur.fetchall()}
+
+def count_missed_days_for_member(member_id: int, marathon_id: int, total_days: int) -> int:
+  with get_conn() as conn:
+    with conn.cursor() as cur:
+      cur.execute("""
+                  SELECT COUNT(DISTINCT date)
+                  FROM day_results
+                  WHERE marathon_id = %s AND member_id = %s;
+                  """, (marathon_id, member_id))
+      sent_days = cur.fetchone()[0] or 0
+
+      return total_days - sent_days

@@ -23,6 +23,7 @@ from handlers.day_stat import day_stat_command
 from handlers.remove_member import remove_member_command
 from handlers.add_marathon_member import add_marathon_member_command
 from handlers.scheduler import start_scheduler
+from handlers.marathon_summary_stat import summary_command
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -53,6 +54,7 @@ def main():
   dp.add_handler(CommandHandler('remove_member', remove_member_command))
   dp.add_handler(CommandHandler('add_marathon_member', add_marathon_member_command))
   dp.add_handler(CommandHandler('add_payment', add_payment_command))
+  dp.add_handler(CommandHandler("summary", summary_command))
 
   # команды в группе
   dp.add_handler(CommandHandler('get_chat_id', get_chat_id_command))

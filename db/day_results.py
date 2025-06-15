@@ -40,7 +40,7 @@ def count_missed_days_for_member(marathon_id: int, member_id: int, total_days: i
                   SELECT COUNT(DISTINCT date)
                   FROM day_results
                   WHERE marathon_id = %s AND member_id = %s AND complete = TRUE AND date BETWEEN %s AND %s;
-                  """, (marathon_id, member_id))
+                  """, (marathon_id, member_id, start_date, end_date))
       sent_days = cur.fetchone()[0] or 0
 
       return total_days - sent_days

@@ -58,9 +58,9 @@ def calculate_total_rewards(distribution, members):
     missed_usernames = set(day["missed_lines"])  # например: {'@vika', '@masha'}
     print('missed_usernames',missed_usernames)
     for m in members:
-      username = f"@{m['username']}" if m["username"] else None
+      username = m["username"].lstrip("@")
       print('username',username)
-      if username and username not in missed_usernames:
+      if username and f"@{username}" not in missed_usernames:
         rewards_by_user[username] += day["per_person_payment"]
         print('yes')
       else:
@@ -87,7 +87,7 @@ def build_day_distribution(marathon, members, missing_days):
     distribution.append({
       "date": day,
       "missed_tg_ids": missed_tg_ids,
-      "missed_lines": [m.lstrip("@") for m in missed_members],
+      "missed_lines": missed_members,
       "missed_count": missed_count,
       "sent_count": sent_count,
       "total_due": total_due,

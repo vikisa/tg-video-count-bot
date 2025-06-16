@@ -50,14 +50,14 @@ def missed_days_command(update: Update, context: CallbackContext):
     update.message.reply_text(f"⚠️ Ошибка при сборе статистики: {e}")
 
 def calculate_total_rewards(distribution, members):
-  rewards_by_user = {m["tg_id"]: 0 for m in members}
+  rewards_by_user = {m["username"]: 0 for m in members}
 
   for day in distribution:
-    sent_ids = [m["tg_id"] for m in members if m["tg_id"] not in set(day["missed_tg_ids"])]
-    for tg_id in sent_ids:
-      rewards_by_user[tg_id] += day["per_person_payment"]
-
-  return rewards_by_user
+    missed_usernames = set(day["missed_lines"])  # например: {'@vika', '@masha'}
+    for m in members:
+      username = f"@{m['username']}" if m["username"] else None
+      if username and username not in missed_usernames:
+        rewards_by_user[username] += day["per_person_payment"]
 
 def build_day_distribution(marathon, members, missing_days):
   total_members = len(members)
@@ -105,7 +105,7 @@ def format_full_missed_report(marathon, distribution, payments_by_user, members)
   lines.append("<b>💸 Сводка по призам:</b>\n")
   for m in sorted(members, key=lambda x: -payments_by_user[x["tg_id"]]):
     username = f"@{m['username']}" if m["username"] else f"ID {m['tg_id']}"
-    amount = round(payments_by_user[m["tg_id"]], 2)
+    amount = round(payments_by_user[m["username"]], 2)
     lines.append(f"{username}: {amount}₽")
 
   return "\n".join(lines)

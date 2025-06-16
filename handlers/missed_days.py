@@ -59,6 +59,8 @@ def calculate_total_rewards(distribution, members):
       if username and username not in missed_usernames:
         rewards_by_user[username] += day["per_person_payment"]
 
+  return rewards_by_user
+
 def build_day_distribution(marathon, members, missing_days):
   total_members = len(members)
   price = marathon["price"]

@@ -25,99 +25,84 @@ def missed_days_command(update: Update, context: CallbackContext):
     update.message.reply_text("❌ Марафон не найден.")
     return
 
-  members = get_all_members_of_marathon(marathon_id)
-  total_members = len(members)
-  start_date = marathon["start_date"]
-  end_date = marathon["end_date"]
-  price = marathon["price"]
-
   try:
-    missing_days = get_days_with_missing_submissions(marathon_id, start_date, end_date, total_members)
+    members = get_all_members_of_marathon(marathon_id)
+    start_date = marathon["start_date"]
+    end_date = marathon["end_date"]
+
+    missing_days = get_days_with_missing_submissions(
+      marathon_id, start_date, end_date, len(members)
+    )
 
     if not missing_days:
       update.message.reply_text("✅ Нет дней с пропусками — все молодцы!")
       return
 
-    full_text = f"<b>❌ Подробная статистика по дням с пропусками</b> ({marathon['name']}):\n\n"
-    day_distributions = []
+    distribution = build_day_distribution(marathon, members, missing_days)
+    payments_by_user = calculate_total_payments(distribution, members)
+    text = format_full_missed_report(marathon, distribution, payments_by_user, members)
 
-    for day in sorted(missing_days):
-
-      # Кто не сдал
-      missed_members = get_missed_members_for_day(marathon_id, day, members)
-      missed_ids = [m["id"] for m in members if f"@{m['username']}" in missed_members or (not m['username'] and f"ID {m['tg_id']}" in missed_members)]
-      missed_tg_ids = [m["tg_id"] for m in members if m["id"] in missed_ids]
-      missed_tg = missed_members
-
-      # Кто сдал
-      sent_count = total_members - len(missed_tg)
-      missed_count = len(missed_tg)
-
-      total_due = missed_count * price
-      per_person_payment = round(total_due / sent_count, 2) if sent_count > 0 else 0
-
-      date_str = day.strftime('%d.%m.%Y')
-      missed_formatted = "\n".join(f"• {m}" for m in missed_tg)
-
-      day_distributions.append({
-        "date": day,
-        "missed_tg_ids": missed_tg_ids,
-        "per_person_payment": per_person_payment
-      })
-
-      full_text += (
-        f"<b>{date_str}</b>\n"
-        f"❌ Пропустили: {missed_count}\n"
-        f"{missed_formatted if missed_formatted else '—'}\n"
-        f"✅ Сдали: {sent_count}\n"
-        f"💰 Общая сумма за день: {total_due}₽\n"
-        f"💸 Выплата за день: {per_person_payment}₽\n\n"
-      )
-
-    payments_by_user = {m["tg_id"]: 0 for m in members}
-
-    for day in day_distributions:
-      for m in members:
-        tg_id = m["tg_id"]
-        if tg_id not in day["missed_tg_ids"]:
-          payments_by_user[tg_id] += day["per_person_payment"]
-
-    # Вывод по каждому участнику
-    full_text += "<b>💸 Сводка по выплатам участников</b>\n\n"
-    for m in sorted(members, key=lambda x: -payments_by_user[x["tg_id"]]):
-      tg_id = m["tg_id"]
-      username = f"@{m['username']}" if m["username"] else f"ID {tg_id}"
-      amount = round(payments_by_user[tg_id], 2)
-      full_text += f"{username}: {amount}₽\n"
-
-    update.message.reply_text(full_text.strip(), parse_mode="HTML")
+    update.message.reply_text(text.strip(), parse_mode="HTML")
 
   except Exception as e:
     update.message.reply_text(f"⚠️ Ошибка при сборе статистики: {e}")
 
-def calculate_total_payments(distribution_list: list, members: list) -> list:
-  # tg_id → сумма выплат
+def calculate_total_payments(distribution_list: list, members: list):
   payments_by_user = {m["tg_id"]: 0 for m in members}
-
   for day in distribution_list:
     for m in members:
-      tg_id = m["tg_id"]
-      if tg_id not in day["missed_tg_ids"]:
-        payments_by_user[tg_id] += day["per_person_payment"]
+      if m["tg_id"] not in day["missed_tg_ids"]:
+        payments_by_user[m["tg_id"]] += day["per_person_payment"]
+  return payments_by_user
 
-  # Округляем до копеек
-  return [
-    {
-      "tg_id": tg_id,
-      "username": next((m["username"] for m in members if m["tg_id"] == tg_id), None),
-      "total": round(amount, 2)
-    }
-    for tg_id, amount in payments_by_user.items()
-  ]
+def build_day_distribution(marathon, members, missing_days):
+  total_members = len(members)
+  price = marathon["price"]
+  marathon_id = marathon["id"]
 
-def format_user_payments(user_payments: list) -> str:
-  lines = ["<b>💰 Суммарные выплаты по участникам</b>\n"]
-  for u in sorted(user_payments, key=lambda x: -x["total"]):
-    name = f"@{u['username']}" if u["username"] else f"ID {u['tg_id']}"
-    lines.append(f"{name}: {u['total']}₽")
+  distribution = []
+  for day in sorted(missing_days):
+    missed_members = get_missed_members_for_day(marathon_id, day, members)
+    missed_ids = [m["id"] for m in members if f"@{m['username']}" in missed_members or (not m['username'] and f"ID {m['tg_id']}" in missed_members)]
+    missed_tg_ids = [m["tg_id"] for m in members if m["id"] in missed_ids]
+
+    sent_count = total_members - len(missed_tg_ids)
+    missed_count = len(missed_tg_ids)
+    total_due = missed_count * price
+    per_person_payment = round(total_due / sent_count, 2) if sent_count else 0
+
+    distribution.append({
+      "date": day,
+      "missed_tg_ids": missed_tg_ids,
+      "missed_lines": missed_members,
+      "missed_count": missed_count,
+      "sent_count": sent_count,
+      "total_due": total_due,
+      "per_person_payment": per_person_payment
+    })
+  return distribution
+
+def format_full_missed_report(marathon, distribution, payments_by_user, members):
+  lines = [f"<b>❌ Подробная статистика по дням с пропусками</b> ({marathon['name']}):\n"]
+
+  for day in distribution:
+    date_str = day["date"].strftime('%d.%m.%Y')
+    missed_lines = "\n".join(f"• {m}" for m in day["missed_lines"]) or "—"
+
+    lines.append(
+      f"<b>{date_str}</b>\n"
+      f"❌ Пропустили: {day['missed_count']} чел.\n"
+      f"{missed_lines}\n"
+      f"✅ Сдали: {day['sent_count']} чел.\n"
+      f"💰 Долг дня: {day['total_due']}₽\n"
+      f"💸 На каждого: {day['per_person_payment']}₽\n"
+    )
+
+  lines.append("<b>💸 Сводка по выплатам участников</b>\n")
+  for m in sorted(members, key=lambda x: -payments_by_user[x["tg_id"]]):
+    username = f"@{m['username']}" if m["username"] else f"ID {m['tg_id']}"
+    amount = round(payments_by_user[m["tg_id"]], 2)
+    lines.append(f"{username}: {amount}₽")
+
   return "\n".join(lines)
+

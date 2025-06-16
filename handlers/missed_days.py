@@ -29,6 +29,7 @@ def missed_days_command(update: Update, context: CallbackContext):
   total_members = len(members)
   start_date = marathon["start_date"]
   end_date = marathon["end_date"]
+  price = marathon["price"]
 
   try:
     missing_days = get_days_with_missing_submissions(marathon_id, start_date, end_date, total_members)
@@ -37,16 +38,33 @@ def missed_days_command(update: Update, context: CallbackContext):
       update.message.reply_text("✅ Нет дней с пропусками — все молодцы!")
       return
 
-    full_text = f"<b>❌ Пропуски по дням</b> ({marathon['name']}):\n\n"
+    full_text = f"<b>❌ Подробная статистика по дням с пропусками</b> ({marathon['name']}):\n\n"
 
     for day in sorted(missing_days):
-      missed_users = get_missed_members_for_day(marathon_id, day, members)
-      day_str = day.strftime('%d.%m.%Y')
-      if missed_users:
-        users_text = "\n".join(f"• {u}" for u in missed_users)
-        full_text += f"<b>{day_str}</b>\n{users_text}\n\n"
-      else:
-        full_text += f"<b>{day_str}</b>\n(все сдали?)\n\n"
+
+      # Кто не сдал
+      missed_members = get_missed_members_for_day(marathon_id, day, members)
+      missed_ids = [m["id"] for m in members if f"@{m['username']}" in missed_members or (not m['username'] and f"ID {m['tg_id']}" in missed_members)]
+      missed_tg = missed_members
+
+      # Кто сдал
+      sent_count = total_members - len(missed_tg)
+      missed_count = len(missed_tg)
+
+      total_due = missed_count * price
+      per_person_payment = round(total_due / sent_count, 2) if sent_count > 0 else 0
+
+      date_str = day.strftime('%d.%m.%Y')
+      missed_formatted = "\n".join(f"• {m}" for m in missed_tg)
+
+      full_text += (
+        f"<b>{date_str}</b>\n"
+        f"❌ Пропустили: {missed_count}\n"
+        f"{missed_formatted if missed_formatted else '—'}\n"
+        f"✅ Сдали: {sent_count}\n"
+        f"💰 Общая сумма за день: {total_due}₽\n"
+        f"💸 Выплата за день: {per_person_payment}₽\n\n"
+      )
 
     update.message.reply_text(full_text.strip(), parse_mode="HTML")
 

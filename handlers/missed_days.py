@@ -51,13 +51,19 @@ def missed_days_command(update: Update, context: CallbackContext):
 
 def calculate_total_rewards(distribution, members):
   rewards_by_user = {m["username"]: 0 for m in members}
+  print('rewards_by_user',rewards_by_user)
 
   for day in distribution:
     missed_usernames = set(day["missed_lines"])  # например: {'@vika', '@masha'}
+    print('missed_usernames',missed_usernames)
     for m in members:
       username = f"@{m['username']}" if m["username"] else None
+      print('username',username)
       if username and username not in missed_usernames:
         rewards_by_user[username] += day["per_person_payment"]
+        print('yes')
+      else:
+        print('no')
 
   return rewards_by_user
 

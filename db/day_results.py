@@ -59,3 +59,21 @@ def get_days_with_missing_submissions(marathon_id: int, start_date, end_date, to
 
       rows = cur.fetchall()
       return [row[0] for row in rows]
+
+def get_missed_members_for_day(marathon_id: int, date, all_members: list) -> list:
+  with get_conn() as conn:
+    with conn.cursor() as cur:
+      # Получаем ID всех, кто сдал в этот день
+      cur.execute("""
+                  SELECT DISTINCT member_id
+                  FROM day_results
+                  WHERE marathon_id = %s AND date = %s AND complete = TRUE;
+                  """, (marathon_id, date))
+      sent_ids = {row[0] for row in cur.fetchall()}
+
+      # Возвращаем тех, кто не сдал
+      missed = [
+        f"@{m['username']}" if m["username"] else f"ID {m['tg_id']}"
+        for m in all_members if m["id"] not in sent_ids
+      ]
+      return missed

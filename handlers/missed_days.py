@@ -55,7 +55,7 @@ def calculate_total_rewards(distribution, members):
   print('rewards_by_user',rewards_by_user)
 
   for day in distribution:
-    missed_usernames = set(day["missed_lines"])  # например: {'@vika', '@masha'}
+    missed_usernames = {name[1:] if name.startswith("@") else name for name in day["missed_lines"]}  # например: {'@vika', '@masha'}
     print('missed_usernames',missed_usernames)
     for m in members:
       print("raw username:", m["username"])

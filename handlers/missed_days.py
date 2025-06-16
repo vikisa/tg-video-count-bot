@@ -113,9 +113,9 @@ def format_full_missed_report(marathon, distribution, payments_by_user, members)
     )
 
   lines.append("<b>💸 Сводка по призам:</b>\n")
-  for m in sorted(members, key=lambda x: -payments_by_user[x["tg_id"]]):
+  for m in sorted(members, key=lambda x: -payments_by_user.get(m["username"], 0)):
     username = f"@{m['username']}" if m["username"] else f"ID {m['tg_id']}"
-    amount = round(payments_by_user[m["username"]], 2)
+    amount = round(payments_by_user.get(m["username"], 0), 2)
     lines.append(f"{username}: {amount}₽")
 
   return "\n".join(lines)

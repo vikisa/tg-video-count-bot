@@ -40,7 +40,7 @@ def missed_days_command(update: Update, context: CallbackContext):
 
     distribution = build_day_distribution(marathon, members, missing_days)
     print('distribution', distribution)
-    payments_by_user = calculate_total_payments(distribution, members)
+    payments_by_user = calculate_total_rewards(distribution, members)
     print('payments_by_user',payments_by_user)
     text = format_full_missed_report(marathon, distribution, payments_by_user, members)
 
@@ -49,17 +49,15 @@ def missed_days_command(update: Update, context: CallbackContext):
   except Exception as e:
     update.message.reply_text(f"⚠️ Ошибка при сборе статистики: {e}")
 
-def calculate_total_payments(distribution, members):
-  payments_by_user = {m["tg_id"]: 0 for m in members}
+def calculate_total_rewards(distribution, members):
+  rewards_by_user = {m["tg_id"]: 0 for m in members}
 
   for day in distribution:
-    missed_set = set(day["missed_tg_ids"])  # для быстрого поиска
-    for m in members:
-      tg_id = m["tg_id"]
-      if tg_id not in missed_set:
-        payments_by_user[tg_id] += day["per_person_payment"]
+    sent_ids = [m["tg_id"] for m in members if m["tg_id"] not in set(day["missed_tg_ids"])]
+    for tg_id in sent_ids:
+      rewards_by_user[tg_id] += day["per_person_payment"]
 
-  return payments_by_user
+  return rewards_by_user
 
 def build_day_distribution(marathon, members, missing_days):
   total_members = len(members)

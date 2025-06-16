@@ -39,7 +39,9 @@ def missed_days_command(update: Update, context: CallbackContext):
       return
 
     distribution = build_day_distribution(marathon, members, missing_days)
+    print('distribution', distribution)
     payments_by_user = calculate_total_payments(distribution, members)
+    print('payments_by_user',payments_by_user)
     text = format_full_missed_report(marathon, distribution, payments_by_user, members)
 
     update.message.reply_text(text.strip(), parse_mode="HTML")
@@ -83,7 +85,7 @@ def build_day_distribution(marathon, members, missing_days):
   return distribution
 
 def format_full_missed_report(marathon, distribution, payments_by_user, members):
-  lines = [f"<b>❌ Подробная статистика по дням с пропусками</b> ({marathon['name']}):\n"]
+  lines = [f"<b>Расчёт по призам</b> ({marathon['name']}):\n"]
 
   for day in distribution:
     date_str = day["date"].strftime('%d.%m.%Y')
@@ -91,14 +93,14 @@ def format_full_missed_report(marathon, distribution, payments_by_user, members)
 
     lines.append(
       f"<b>{date_str}</b>\n"
-      f"❌ Пропустили: {day['missed_count']} чел.\n"
+      f"❌ Пропустили: {day['missed_count']}\n"
       f"{missed_lines}\n"
-      f"✅ Сдали: {day['sent_count']} чел.\n"
-      f"💰 Долг дня: {day['total_due']}₽\n"
-      f"💸 На каждого: {day['per_person_payment']}₽\n"
+      f"✅ Сдали: {day['sent_count']}\n"
+      f"💰 Общая сумма за день: {day['total_due']}₽\n"
+      f"💸 Выплата участнице за день: {day['per_person_payment']}₽\n"
     )
 
-  lines.append("<b>💸 Сводка по выплатам участников</b>\n")
+  lines.append("<b>💸 Сводка по призам:</b>\n")
   for m in sorted(members, key=lambda x: -payments_by_user[x["tg_id"]]):
     username = f"@{m['username']}" if m["username"] else f"ID {m['tg_id']}"
     amount = round(payments_by_user[m["tg_id"]], 2)

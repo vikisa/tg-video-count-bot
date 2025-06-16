@@ -49,12 +49,16 @@ def missed_days_command(update: Update, context: CallbackContext):
   except Exception as e:
     update.message.reply_text(f"⚠️ Ошибка при сборе статистики: {e}")
 
-def calculate_total_payments(distribution_list: list, members: list):
+def calculate_total_payments(distribution, members):
   payments_by_user = {m["tg_id"]: 0 for m in members}
-  for day in distribution_list:
+
+  for day in distribution:
+    missed_set = set(day["missed_tg_ids"])  # для быстрого поиска
     for m in members:
-      if m["tg_id"] not in day["missed_tg_ids"]:
-        payments_by_user[m["tg_id"]] += day["per_person_payment"]
+      tg_id = m["tg_id"]
+      if tg_id not in missed_set:
+        payments_by_user[tg_id] += day["per_person_payment"]
+
   return payments_by_user
 
 def build_day_distribution(marathon, members, missing_days):

@@ -58,9 +58,10 @@ def calculate_total_rewards(distribution, members):
     missed_usernames = set(day["missed_lines"])  # например: {'@vika', '@masha'}
     print('missed_usernames',missed_usernames)
     for m in members:
+      print("raw username:", m["username"])
       username = m["username"].lstrip("@")
       print('username',username)
-      if username and f"@{username}" not in missed_usernames:
+      if username and username not in missed_usernames:
         rewards_by_user[username] += day["per_person_payment"]
         print('yes')
       else:

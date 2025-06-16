@@ -30,10 +30,10 @@ def get_marathon_summary_stat(marathon_id: int) -> str:
 
     missed_days = count_missed_days_for_member(marathon_id, member_id, total_days, start_date, end_date)
     due = missed_days * price
-
     paid = get_total_payments_by_member(marathon_id, member_id)
+    emoji = "✅" if paid == due else "❌"
 
-    lines.append(f"{username}\nПропущено дней: {missed_days}\nОбщая сумма: {due}₽\nЗаплатила: {paid}₽\n")
+    lines.append(f"{username} {emoji}\nПропущено дней: {missed_days}\nОбщая сумма: {due}₽\nЗаплатила: {paid}₽\n")
 
   if not lines:
     return "❌ Нет участников в марафоне."

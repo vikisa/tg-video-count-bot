@@ -44,3 +44,18 @@ def count_missed_days_for_member(marathon_id: int, member_id: int, total_days: i
       sent_days = cur.fetchone()[0] or 0
 
       return total_days - sent_days
+
+def get_days_with_missing_submissions(marathon_id: int, start_date, end_date, total_members: int) -> list:
+  with get_conn() as conn:
+    with conn.cursor() as cur:
+      cur.execute("""
+                  SELECT date
+                  FROM day_results
+                  WHERE marathon_id = %s AND complete = TRUE
+                    AND date BETWEEN %s AND %s
+                  GROUP BY date
+                  HAVING COUNT(DISTINCT member_id) < %s;
+                  """, (marathon_id, start_date, end_date, total_members))
+
+      rows = cur.fetchall()
+      return [row[0] for row in rows]

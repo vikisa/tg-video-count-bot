@@ -87,7 +87,7 @@ def build_day_distribution(marathon, members, missing_days):
     distribution.append({
       "date": day,
       "missed_tg_ids": missed_tg_ids,
-      "missed_lines": missed_members,
+      "missed_lines": [m.lstrip("@") for m in missed_members],
       "missed_count": missed_count,
       "sent_count": sent_count,
       "total_due": total_due,

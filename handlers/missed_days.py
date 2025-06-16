@@ -40,6 +40,7 @@ def missed_days_command(update: Update, context: CallbackContext):
 
     distribution = build_day_distribution(marathon, members, missing_days)
     print('distribution', distribution)
+    print('members', members)
     payments_by_user = calculate_total_rewards(distribution, members)
     print('payments_by_user',payments_by_user)
     text = format_full_missed_report(marathon, distribution, payments_by_user, members)
